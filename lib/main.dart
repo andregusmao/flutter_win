@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(MyApp());
@@ -12,6 +13,10 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        textTheme: GoogleFonts.poppinsTextTheme(
+          Theme.of(context).textTheme,
+        ),
       ),
       home: MyHomePage(),
     );
@@ -22,9 +27,14 @@ class User {
   String name;
   String email;
   String avatar;
-  Color color;
+  Color? color;
 
-  User({this.name, this.email, this.avatar, this.color});
+  User({
+    this.name = '',
+    this.email = '',
+    this.avatar = '',
+    this.color,
+  });
 }
 
 class MyHomePage extends StatefulWidget {
@@ -33,13 +43,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<User> users;
-  User _currentUser;
+  List<User> users = [];
+  User _currentUser = User();
 
   void _showMessage() {
-    setState(() {
-      this._currentUser = this.users[1];
-    });
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -63,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
         name: 'André Gusmão',
         email: 'andre.gusmao@albg.dev.br',
         avatar: 'AG',
-        color: Colors.blue[800],
+        color: Colors.blue.shade800,
       ),
       User(
         name: 'Adriana Francione',
@@ -103,20 +110,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   .users
                   .where((User user) => user.email != this._currentUser.email)
                   .map(
-                (User user) {
-                  print(user.name);
-                  return GestureDetector(
-                    child: CircleAvatar(
-                      child: Text(user.avatar),
-                      backgroundColor: user.color,
-                      foregroundColor: Colors.white,
+                    (User user) => GestureDetector(
+                      child: CircleAvatar(
+                        child: Text(user.avatar),
+                        backgroundColor: user.color,
+                        foregroundColor: Colors.white,
+                      ),
+                      onTap: () {
+                        setState(() => this._currentUser = user);
+                      },
                     ),
-                    onTap: () {
-                      setState(() => this._currentUser = user);
-                    },
-                  );
-                },
-              ).toList(),
+                  )
+                  .toList(),
             ),
             ListTile(
               title: Text('Cadastros'),
